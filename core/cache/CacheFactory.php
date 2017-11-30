@@ -22,8 +22,8 @@ class CacheFactory
     const HASH_CHAT_USER_LOGIN_STATIC = 'user';
     
     ##SET#################################################################
-    // 房间内用户
-    const SET_ROOM_USER = 'room_user';
+    // 房间内用户 room_user_{$roomId} => [uid1,uid2,uid3...]
+    const SET_ROOM_USER = 'room_user_';
 
     /**
      * cache object

@@ -42,7 +42,7 @@ class UserService extends BaseService
      * @return UserService
      * @author lixin
      */
-    public static function getInstance()
+    public static function getInstance() : UserService
     {
         if (empty(self::$_instance)) {
             self::$_instance = new self();

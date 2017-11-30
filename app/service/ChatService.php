@@ -21,7 +21,7 @@ class ChatService extends BaseService
      * @var ChatService
      */
     protected static $_instance;
-    
+
     /**
      * ChatService constructor.
      * @author lixin
@@ -30,13 +30,13 @@ class ChatService extends BaseService
     {
         parent::__construct();
     }
-    
+
     /**
      * 获取ChatService单例
      * @return ChatService
      * @author lixin
      */
-    public static function getInstance()
+    public static function getInstance() : ChatService
     {
         if (empty(self::$_instance)) {
             self::$_instance = new self();
@@ -58,17 +58,34 @@ class ChatService extends BaseService
             return 0;
         }
         $chatRoomModel = new ChatRoom();
-        try {
-            $insertId = $chatRoomModel->insertGetId([
-                'roomName' => $roomName,
-                'roomOwnerUid' => $uid,
-                'createTime' => time()
-            ]);
-            
+
+        $insertId = $chatRoomModel->insertGetId([
+            'roomName' => $roomName,
+            'roomOwnerUid' => $uid,
+            'createTime' => time()
+        ]);
+        if ($insertId) {
+            CacheFactory::getRedis()->sadd(CacheFactory::SET_ROOM_USER . $insertId, $uid);
             return $insertId;
-        } catch (\Exception $e) {
+        } else {
             return 0;
         }
     }
     
+    /**
+     * 房间列表
+     * @param int $page
+     * @param int $pageSize
+     * @return array
+     * @author lixin
+     */
+    public function roomList(int $page, int $pageSize) : array 
+    {
+        $result = ChatRoom::paginate($pageSize, ['*'], 'page', $page)->toArray();
+        if (isset($result['data'][0])) {
+            return $result['data'];
+        } else {
+            return [];
+        }
+    }
 }
