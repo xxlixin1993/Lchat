@@ -1,0 +1,16 @@
+{
+  "name": "Lcmd-PHP-FrameWork",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": ["framework", "Socket", "PHP"],
+  "require": {
+    "php": ">=7.0.0",
+    "guzzlehttp/guzzle": "~6.2.3",
+    "illuminate/database": "~5.4.13",
+    "illuminate/events":"~5.4",
+    "monolog/monolog":"~1.22",
+    "illuminate/pagination":"~5.4.27",
+    "vlucas/phpdotenv":"~2.4.0",
+    "mongodb/mongodb":"1.0.5"
+  }
+}
