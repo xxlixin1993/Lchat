@@ -92,8 +92,8 @@ class UserService extends BaseService
 
         if ($userInfo[0]['password'] == md5($password . $userInfo[0]['salt'])) {
             // 有登陆直接挤掉之前的
-            CacheFactory::getRedis()->hset(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $userInfo[0]['uid'], $fd);
-            CacheFactory::getRedis()->set(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd, $userInfo[0]['uid']);
+            CacheFactory::getRedis()->hset(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $userInfo[0]['id'], $fd);
+            CacheFactory::getRedis()->set(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd, $userInfo[0]['id']);
             return true;
         } else {
             return false;
