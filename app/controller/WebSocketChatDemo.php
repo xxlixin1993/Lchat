@@ -23,42 +23,7 @@ class WebSocketChatDemo extends WebSocketController
     {
         $this->_socket->send($this->_frame->fd, 'hello world');
     }
-
     
-    public function login(array $request)
-    {
-        $userInfo = CacheFactory::getRedis()->get($request['username']);
-
-        if (!empty($userInfo) && $userInfo['password'] == $request['password']) {
-            //登陆
-            $data = [
-                'username' => $request['username'],
-                'router' => 'login',
-                'status' => 1,
-                'message' => 'login success'
-            ];
-        } else if (empty($userInfo)) {
-            //第一次登陆 当做注册
-            CacheFactory::getRedis()->set($request['username'], ['password' => $request['password']]);
-            CacheFactory::getRedis()->set($this->_frame->fd, ['uid' => $this->_frame->fd, 'username' => $request['username']]);
-            $data = [
-                'username' => $request['username'],
-                'router' => 'login',
-                'status' => 1,
-                'message' => 'ok'
-            ];
-        } else {
-            $data = [
-                'username' => $request['username'],
-                'router' => 'login',
-                'status' => 2,
-                'message' => 'error'
-            ];
-        }
-
-        $this->_socket->send($this->_frame->fd, json_encode($data));
-    }
-
     public function chatRoom(array $request)
     {
         $data = [
