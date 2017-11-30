@@ -71,18 +71,11 @@ class User extends WebSocketController
      */
     public function signOut(array $request)
     {
-        if (!isset($request['username'])) {
-            $this->error(Code::PARAMS_ERROR, 'params error');
-        }
-        $username = (string)$request['username'];
         $userService = UserService::getInstance();
-        $result = $userService->signOut($username, $this->_frame->fd);
-        if ($result) {
-            $this->success([
-                'router' => 'signOut',
-            ]);
-        } else {
-            $this->error(UserService::SIGN_OUT_ERROR, 'sign out error');
-        }
+        $userService->signOut($this->_frame->fd);
+        
+        $this->success([
+            'router' => 'signOut',
+        ]);
     }
 }

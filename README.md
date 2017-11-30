@@ -50,6 +50,14 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表'
+
+CREATE TABLE `room` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '房间id',
+  `roomName` varchar(20) NOT NULL DEFAULT '' COMMENT '房间名',
+  `roomOwnerUid` int(11) NOT NULL DEFAULT '0' COMMENT '房间属主',
+  `createTime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='房间表'
 ```
 
 ## 错误码

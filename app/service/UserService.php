@@ -92,7 +92,8 @@ class UserService extends BaseService
 
         if ($userInfo[0]['password'] == md5($password . $userInfo[0]['salt'])) {
             // 有登陆直接挤掉之前的
-            CacheFactory::getRedis()->hset(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $username, $fd);
+            CacheFactory::getRedis()->hset(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $userInfo[0]['uid'], $fd);
+            CacheFactory::getRedis()->set(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd, $userInfo[0]['uid']);
             return true;
         } else {
             return false;
@@ -101,21 +102,14 @@ class UserService extends BaseService
 
     /**
      * 登出
-     * @param string $username
      * @param int $fd
-     * @return bool
      * @author lixin
      */
-    public function signOut(string $username, int $fd) : bool
+    public function signOut(int $fd)
     {
-        $result = CacheFactory::getRedis()->hget(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $username);
- 
-        if ($result == $fd) {
-            // 清除登陆状态
-            CacheFactory::getRedis()->hdel(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $username);
-            return true;
-        } else {
-            return false;
-        }
+        $uid = CacheFactory::getRedis()->get(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd);
+        // 清除登陆状态
+        CacheFactory::getRedis()->hdel(CacheFactory::HASH_CHAT_USER_LOGIN_STATIC, $uid);
+        CacheFactory::getRedis()->del(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd);
     }
 }

@@ -13,8 +13,17 @@ use core\Config;
 
 class CacheFactory
 {
-    // 聊天用户登陆状态 $username => $fd 数据量大了之后可以分隔成多个
+    ##STRING##############################################################
+    // 反查 STRING_CHAT_USER_LOGIN_STATIC fd_{$fd} => $uid
+    const STRING_CHAT_FD_LOGIN_STATIC = 'fd_';
+    
+    ##HASH################################################################
+    // 聊天用户登陆状态 $uid => $fd 数据量大量可以用一致性hash等算法分开
     const HASH_CHAT_USER_LOGIN_STATIC = 'user';
+    
+    ##SET#################################################################
+    // 房间内用户
+    const SET_ROOM_USER = 'room_user';
 
     /**
      * cache object
