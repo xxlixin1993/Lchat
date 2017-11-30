@@ -44,7 +44,7 @@ class WebSocketController extends BaseController
      */
     public static function openDoing()
     {
-        
+
     }
 
     /**
@@ -59,24 +59,26 @@ class WebSocketController extends BaseController
     /**
      * 成功返回客户端
      * @param array $data 数据
+     * @param int $fd 链接
      * @return bool
      * @author lixin
      */
-    public function success(array $data) : bool
+    public function success(array $data, int $fd = 0) : bool
     {
-        return $this->_output(Code::SUCCESS_RESPONSE, 'ok', $data);
+        return $this->_output(Code::SUCCESS_RESPONSE, 'ok', $data, $fd);
     }
 
     /**
      * 失败返回客户端
      * @param int $code 状态码
      * @param string $msg 信息
+     * @param int $fd 链接
      * @return bool
      * @author lixin
      */
-    public function error(int $code, string $msg) : bool
+    public function error(int $code, string $msg, int $fd = 0) : bool
     {
-        return $this->_output($code, $msg, []);
+        return $this->_output($code, $msg, [], $fd);
     }
 
     /**
@@ -84,11 +86,15 @@ class WebSocketController extends BaseController
      * @param int $code 状态码
      * @param string $msg 信息
      * @param array $data 数据
+     * @param int $fd 链接
      * @return bool
      * @author lixin
      */
-    private function _output(int $code, string $msg, array $data) : bool
+    private function _output(int $code, string $msg, array $data, int $fd = 0) : bool
     {
+        if (empty($fd)) {
+            $fd = $this->_frame->fd;
+        }
         $sendData = [
             'code' => $code,
             'data' => $data,
@@ -102,6 +108,6 @@ class WebSocketController extends BaseController
                 'msg' => $msg,
             ]);
         }
-        return $this->_socket->send($this->_frame->fd, $result);
+        return $this->_socket->send($fd, $result);
     }
 }

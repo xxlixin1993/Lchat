@@ -17,6 +17,13 @@ class ChatService extends BaseService
 {
     // 创建房间失败
     const CREATE_ROOM_ERROR = '2001';
+    // 加入房间失败
+    const JOIN_ROOM_ERROR = '2002';
+    // 退出房间失败
+    const QUIT_ROOM_ERROR = '2003';
+    // 房间聊天失败
+    const ROOM_CHAT_ERROR = '2004';
+    
     /**
      * @var ChatService
      */
@@ -71,7 +78,7 @@ class ChatService extends BaseService
             return 0;
         }
     }
-    
+
     /**
      * 房间列表
      * @param int $page
@@ -79,7 +86,7 @@ class ChatService extends BaseService
      * @return array
      * @author lixin
      */
-    public function roomList(int $page, int $pageSize) : array 
+    public function roomList(int $page, int $pageSize) : array
     {
         $result = ChatRoom::paginate($pageSize, ['*'], 'page', $page)->toArray();
         if (isset($result['data'][0])) {
@@ -87,5 +94,44 @@ class ChatService extends BaseService
         } else {
             return [];
         }
+    }
+
+    /**
+     * 加入房间
+     * @param int $roomId
+     * @param int $fd
+     * @return int
+     * @author lixin
+     */
+    public function joinRoom(int $roomId, int $fd) : int
+    {
+        $uid = CacheFactory::getRedis()->get(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd);
+        if ($uid) {
+            return CacheFactory::getRedis()->sadd(CacheFactory::SET_ROOM_USER . $roomId, $uid);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 退出房间
+     * @param int $roomId
+     * @param int $fd
+     * @return int
+     * @author lixin
+     */
+    public function quitRoom(int $roomId, int $fd) : int
+    {
+        $uid = CacheFactory::getRedis()->get(CacheFactory::STRING_CHAT_FD_LOGIN_STATIC . $fd);
+        if ($uid) {
+            return CacheFactory::getRedis()->srem(CacheFactory::SET_ROOM_USER . $roomId, $uid);
+        } else {
+            return 0;
+        }
+    }
+
+    public function roomChat(int $roomId) : array
+    {
+
     }
 }

@@ -63,9 +63,43 @@ class Chat extends WebSocketController
      * @param array $request
      * @author lixin
      */
-    public function addRoom(array $request)
+    public function joinRoom(array $request)
     {
+        if (!isset($request['roomId'])) {
+            $this->error(Code::PARAMS_ERROR, 'params error');
+        }
+        $roomId = (int)$request['roomId'];
+        $chatService = ChatService::getInstance();
+        $result = $chatService->joinRoom($roomId, $this->_frame->fd);
+        if ($result) {
+            $this->success([
+                'router' => 'addRoom',
+            ]);
+        } else {
+            $this->error(ChatService::JOIN_ROOM_ERROR, 'join room error');
+        }
+    }
 
+    /**
+     * 退出房间
+     * @param array $request
+     * @author lixin
+     */
+    public function quitRoom(array $request)
+    {
+        if (!isset($request['roomId'])) {
+            $this->error(Code::PARAMS_ERROR, 'params error');
+        }
+        $roomId = (int)$request['roomId'];
+        $chatService = ChatService::getInstance();
+        $result = $chatService->quitRoom($roomId, $this->_frame->fd);
+        if ($result) {
+            $this->success([
+                'router' => 'quitRoom',
+            ]);
+        } else {
+            $this->error(ChatService::QUIT_ROOM_ERROR, 'quit room error');
+        }
     }
 
     /**
@@ -75,6 +109,22 @@ class Chat extends WebSocketController
      */
     public function roomChat(array $request)
     {
-
+        if (!isset($request['roomId']) || !isset($request['msg'])) {
+            $this->error(Code::PARAMS_ERROR, 'params error');
+        }
+        $roomId = (int)$request['roomId'];
+        $msg = (int)$request['msg'];
+        $chatService = ChatService::getInstance();
+        $fdRes = $chatService->roomChat($roomId);
+        if ($fdRes) {
+            foreach ($fdRes as $fd) {
+                $this->success(
+                    ['msg' => $msg, 'router' => 'roomChat'],
+                    $fd
+                );
+            }
+        } else {
+            $this->error(ChatService::QUIT_ROOM_ERROR, 'room chat error');
+        }
     }
 }
